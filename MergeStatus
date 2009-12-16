@@ -1,1 +1,4 @@
-16288
+16440
+
+prefix=http://smi-protege.stanford.edu/repos/protege/protege4
+svn merge -rxxx:yyy ${prefix}/plugins/org.protege.editor.owl/trunk
