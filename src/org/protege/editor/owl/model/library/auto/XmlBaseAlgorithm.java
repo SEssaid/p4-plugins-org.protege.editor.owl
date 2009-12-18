@@ -1,25 +1,18 @@
-package org.protege.editor.owl.ui.library.auto;
+package org.protege.editor.owl.model.library.auto;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -38,12 +31,6 @@ public class XmlBaseAlgorithm implements Algorithm {
     private InputStream is;
 
     private URI xmlBase;
-
-
-    public XmlBaseAlgorithm(InputStream is) {
-        this.is = is;
-        this.xmlBase = null;
-    }
     
     public Set<URI> getSuggestions(File f) {
         try {

@@ -1,4 +1,4 @@
-package org.protege.editor.owl.ui.library.auto;
+package org.protege.editor.owl.model.library.auto;
 
 import java.io.File;
 import java.net.URI;

@@ -385,7 +385,13 @@ public class OWLModelManagerImpl extends AbstractModelManager
         // Add the parent file which will be the folder
         if (ontologyRootFolders.add(file.getParentFile())) {
             // Add automapped library
-            autoMappedRepositoryIRIMapper.addLibrary(new FolderOntologyLibrary(file.getParentFile()));
+            try {
+                autoMappedRepositoryIRIMapper.addLibrary(new FolderOntologyLibrary(file.getParentFile()));
+            }
+            catch (IOException ioe) {
+                ProtegeApplication.getErrorLog().logError(ioe);
+                logger.error("Could not look for possible imports in the directory containing " + uri.toString());
+            }
         }
     }
 
