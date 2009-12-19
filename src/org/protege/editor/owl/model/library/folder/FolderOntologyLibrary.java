@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.owl.model.library.AbstractOntologyLibrary;
 import org.protege.editor.owl.model.library.OntologyLibraryMemento;
 import org.protege.editor.owl.model.library.auto.Algorithm;
@@ -13,6 +15,7 @@ import org.protege.editor.owl.model.library.auto.XMLCatalogUpdater;
 import org.protege.editor.owl.model.library.auto.XmlBaseAlgorithm;
 import org.protege.xmlcatalog.CatalogUtilities;
 import org.protege.xmlcatalog.XMLCatalog;
+import org.protege.xmlcatalog.exception.CatalogParseException;
 import org.semanticweb.owlapi.model.IRI;
 
 
@@ -26,6 +29,9 @@ import org.semanticweb.owlapi.model.IRI;
  * www.cs.man.ac.uk/~horridgm<br><br>
  */
 public class FolderOntologyLibrary extends AbstractOntologyLibrary {
+	private static final Logger logger = Logger.getLogger(FolderOntologyLibrary.class);
+	
+	public static final String CATALOG_BACKUP_PREFIX = "catalog-backup-";
 	public static final String CATALOG_NAME = "catalog.xml";
 
     public static final String ID = FolderOntologyLibrary.class.getName();
@@ -57,12 +63,11 @@ public class FolderOntologyLibrary extends AbstractOntologyLibrary {
         }
     }
     
-    @Override
+    
     public URI getXmlCatalogName() {
     	return new File(folder, CATALOG_NAME).toURI();
     }
     
-    @Override
     public XMLCatalog getXmlCatalog() {
     	return catalog;
     }
@@ -75,7 +80,24 @@ public class FolderOntologyLibrary extends AbstractOntologyLibrary {
 
     public void rebuild() throws IOException {
     	File catalogFile = new File(folder, CATALOG_NAME);
-    	catalog = updater.update(catalogFile);
+    	boolean existed = catalogFile.exists();
+    	try {
+    		catalog = updater.update(catalogFile);
+    	}
+    	catch (CatalogParseException cpe) {
+    		if (existed) {  // warn, backup and retry...
+    			ProtegeApplication.getErrorLog().logError(cpe);
+    			logger.warn("Catalog " + catalogFile + " corrupt, backing up and trying to create new catalog.");
+    			File backup;
+    			int i = 0;
+    			while ((backup = new File(folder, CATALOG_BACKUP_PREFIX + (i++) + ".xml")).exists()) {
+    				;
+    			}
+    			catalogFile.renameTo(backup);
+    			catalog = updater.update(catalogFile);
+    		}
+    	}
+    	
     }
 
 
