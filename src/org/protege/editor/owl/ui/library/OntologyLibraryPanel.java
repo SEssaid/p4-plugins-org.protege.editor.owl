@@ -182,7 +182,6 @@ public class OntologyLibraryPanel extends JPanel {
             this.selectionPath = selectionPath;
         }
         
-        @Override
         public void actionPerformed(ActionEvent e) {
             DefaultMutableTreeNode nodeToDelete = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
             boolean deleteFromTree = false;
@@ -366,54 +365,54 @@ public class OntologyLibraryPanel extends JPanel {
             return label;
         }
         
-        @Override
+        
         public void visit(UriEntry entry) {   
-            label.setText("<html><body><b>Imported Name: " + entry.getName() + "</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" 
+            label.setText("<html><body><b>Imported Location: " + entry.getName() + "</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" 
                           + "<font color=\"gray\">Redirected To: " + entry.getUri() + "</font></body></html>");
             label.setIcon(null);
         }
         
-        @Override
+        
         public void visit(GroupEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(PublicEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(SystemEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(RewriteSystemEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(DelegatePublicEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(DelegateSystemEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(RewriteUriEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(DelegateUriEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
-        @Override
+        
         public void visit(NextCatalogEntry entry) {
             throw new UnsupportedOperationException("Not implemented yet");
         }
