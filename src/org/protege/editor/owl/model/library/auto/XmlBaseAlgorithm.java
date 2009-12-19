@@ -65,7 +65,7 @@ public class XmlBaseAlgorithm implements Algorithm {
                 if (atts.getQName(i).equals("xml:base")) {
                     try {
                         xmlBase = new URI(atts.getValue(i));
-                        throw new ParseCompletedException();
+                        throw new SAXParseCompletedException();
                     }
                     catch (URISyntaxException e) {
                         log.error("Exception caught", e);
@@ -74,11 +74,6 @@ public class XmlBaseAlgorithm implements Algorithm {
             }
             throw new SAXException("No xml base");
         }
-    }
-    
-    public static class ParseCompletedException extends SAXException {
-        private static final long serialVersionUID = -3132857052804332468L;
-        
     }
 }
 
