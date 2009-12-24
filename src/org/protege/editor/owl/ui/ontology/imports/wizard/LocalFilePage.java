@@ -68,7 +68,13 @@ public class LocalFilePage extends AbstractWizardPanel {
 
     @Override
     public void aboutToHidePanel() {
-    	throw new UnsupportedOperationException("Not implemented yet");
+    	OntologyImportWizard wizard = (OntologyImportWizard) getWizard();
+    	wizard.clearImports();
+    	ImportInfo parameters = new ImportInfo();
+    	parameters.setPhysicalLocation(filePathPanel.getFile().toURI());
+    	wizard.addImport(parameters);
+    	((SelectImportLocationPage) getWizardModel().getPanel(SelectImportLocationPage.ID)).setBackPanelDescriptor(ID);
+    	super.aboutToHidePanel();
     }
 
     private JList createRecentList() {
