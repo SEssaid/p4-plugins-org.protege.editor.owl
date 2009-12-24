@@ -86,7 +86,9 @@ public class LoadedOntologyPage extends AbstractOWLWizardPanel {
         	parameter.setOntologyID(ontology.getOntologyID());
         	parameter.setPhysicalLocation(getOWLModelManager().getOWLOntologyManager().getPhysicalURIForOntology(ontology));
         	parameter.setImportLocation(ontology.getOntologyID().getDefaultDocumentIRI());
+        	wizard.addImport(parameter);
         }
+    	((SelectImportLocationPage) getWizardModel().getPanel(SelectImportLocationPage.ID)).setBackPanelDescriptor(ID);
     }
 
 
@@ -112,7 +114,7 @@ public class LoadedOntologyPage extends AbstractOWLWizardPanel {
 
 
     public Object getNextPanelDescriptor() {
-        return AnticipateOntologyIdPage.ID;
+        return SelectImportLocationPage.ID;
     }
 
 
