@@ -84,6 +84,7 @@ public class URLPage extends AbstractWizardPanel {
     	ImportInfo parameters = new ImportInfo();
     	parameters.setPhysicalLocation(urlPanel.getURI());
     	wizard.addImport(parameters);
+    	((SelectImportLocationPage) getWizardModel().getPanel(SelectImportLocationPage.ID)).setBackPanelDescriptor(ID);
     	super.aboutToHidePanel();
     }
 
