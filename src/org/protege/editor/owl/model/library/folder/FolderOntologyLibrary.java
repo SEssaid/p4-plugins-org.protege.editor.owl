@@ -52,7 +52,7 @@ public class FolderOntologyLibrary extends AbstractOntologyLibrary {
     }
 
 
-    public String getClassExpression() {
+    public String getDescription() {
         try {
             return "Folder: " + folder.getCanonicalPath();
         }
@@ -81,16 +81,19 @@ public class FolderOntologyLibrary extends AbstractOntologyLibrary {
     		if (existed) {  // warn, backup and retry...
     			ProtegeApplication.getErrorLog().logError(cpe);
     			logger.warn("Catalog " + catalogFile + " corrupt, backing up and trying to create new catalog.");
-    			File backup;
-    			int i = 0;
-    			while ((backup = new File(folder, CATALOG_BACKUP_PREFIX + (i++) + ".xml")).exists()) {
-    				;
-    			}
-    			catalogFile.renameTo(backup);
-    			catalog = updater.update(catalogFile);
+    			backup(folder, catalogFile);
+    	        catalog = updater.update(catalogFile); 
     		}
     	}
-    	
+    }
+    
+    private void backup(File folder, File catalogFile) {
+        File backup;
+        int i = 0;
+        while ((backup = new File(folder, CATALOG_BACKUP_PREFIX + (i++) + ".xml")).exists()) {
+            ;
+        }
+        catalogFile.renameTo(backup);
     }
 
 

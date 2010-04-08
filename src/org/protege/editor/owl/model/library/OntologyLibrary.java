@@ -27,7 +27,7 @@ public interface OntologyLibrary {
      * Gets a description of the library, which can be
      * used in user interfaces.
      */
-     String getClassExpression();
+     String getDescription();
      
      /**
       * Get the physical local of the xml catalog.  Needed for

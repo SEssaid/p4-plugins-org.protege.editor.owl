@@ -29,7 +29,7 @@ public abstract class AbstractOntologyLibrary implements OntologyLibrary {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(getClassExpression());
+        builder.append(getDescription());
         return builder.toString();
     }
     
