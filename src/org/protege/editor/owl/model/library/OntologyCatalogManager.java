@@ -2,9 +2,11 @@ package org.protege.editor.owl.model.library;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ public class OntologyCatalogManager {
     
     private XMLCatalog globalCatalog;
     
-    private Map<File, XMLCatalog> localCatalogs;
+    private Map<File, XMLCatalog> localCatalogs = new HashMap<File, XMLCatalog>();
     
     private XMLCatalog activeCatalog;
 
@@ -44,13 +46,78 @@ public class OntologyCatalogManager {
     
     private FolderGroupManager folderLibraryFactory;
 
-    public OntologyCatalogManager() {
-    	globalCatalog = ensureCatalogExists(CommonProtegeProperties.getDataDirectory());
+    public static XMLCatalog ensureCatalogExists(File folder) {
+		XMLCatalog catalog = null;
+		File catalogFile = getCatalogFile(folder);
+		if (catalogFile.exists()) {
+			try {
+				catalog = CatalogUtilities.parseDocument(catalogFile.toURI().toURL());
+			}
+			catch (IOException e) {
+				ProtegeApplication.getErrorLog().logError(e);
+				backup(folder, catalogFile);
+			}
+		}
+		if (detectOldFormat(catalog)) {
+			backup(folder, catalogFile);
+			catalog = null;
+		}
+		if (catalog == null) {
+			catalog = new XMLCatalog(folder.toURI());
+			try {
+				CatalogUtilities.save(catalog, catalogFile);
+			}
+			catch (IOException e) {
+				ProtegeApplication.getErrorLog().logError(e);
+			}
+		}
+		return catalog;
+	}
+
+	// TODO this is bad and hopefully temporary
+	private static boolean detectOldFormat(XMLCatalog catalog) {
+		if (catalog == null || catalog.getId() == null || catalog.getXmlBase() == null) {
+			return false;
+		}
+		if (!catalog.getId().equals(catalog.getXmlBase().toString())) {
+			return false;
+		}
+		for (Entry e : catalog.getEntries()) {
+			if (!(e instanceof UriEntry)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static void backup(File folder, File catalogFile) {
+	    File backup;
+	    int i = 0;
+	    while ((backup = new File(folder, CATALOG_BACKUP_PREFIX + (i++) + ".xml")).exists()) {
+	        ;
+	    }
+	    catalogFile.renameTo(backup);
+	}
+	
+	public static File getCatalogFile(File folder) {
+		return new File(folder, CATALOG_NAME);
+	}
+
+	public static File getGlobalCatalogFile() {
+		return getCatalogFile(CommonProtegeProperties.getDataDirectory());
+	}
+		
+	public OntologyCatalogManager() {
+		reloadGlobalCatalog();
     	// TODO replace with plugin mechanism here!
     	updaters = new ArrayList<OntologyGroupManager>();
     	folderLibraryFactory = new FolderGroupManager();
     	updaters.add(folderLibraryFactory);
     }
+	
+	public void reloadGlobalCatalog() {
+    	globalCatalog = ensureCatalogExists(CommonProtegeProperties.getDataDirectory());
+	}
     
     public URI getRedirect(URI original) {
     	URI redirect = null;
@@ -122,56 +189,14 @@ public class OntologyCatalogManager {
     	return localCatalogs.remove(dir);
     }
     
+    public void reloadFolder(File dir) throws MalformedURLException, IOException {
+    	localCatalogs.remove(dir);
+    	localCatalogs.put(dir, CatalogUtilities.parseDocument(getCatalogFile(dir).toURI().toURL()));
+    }
+    
     public FolderGroupManager getFolderOntologyLibraryBuilder() {
     	return folderLibraryFactory;
     }
-    
-    public static XMLCatalog ensureCatalogExists(File folder) {
-		XMLCatalog catalog = null;
-		File catalogFile = new File(folder, OntologyCatalogManager.CATALOG_NAME);
-		if (catalogFile.exists()) {
-			try {
-				catalog = CatalogUtilities.parseDocument(catalogFile.toURI().toURL());
-			}
-			catch (IOException e) {
-				ProtegeApplication.getErrorLog().logError(e);
-				backup(folder, catalogFile);
-			}
-		}
-		if (detectOldFormat(catalog)) {
-			backup(folder, catalogFile);
-			catalog = null;
-		}
-		if (catalog == null) {
-			catalog = new XMLCatalog(folder.toURI());
-		}
-		return catalog;
-    }
-
-    // TODO this is bad and hopefully temporary
-    private static boolean detectOldFormat(XMLCatalog catalog) {
-    	if (catalog.getId() == null || catalog.getXmlBase() == null) {
-    		return false;
-    	}
-    	if (!catalog.getId().equals(catalog.getXmlBase().toString())) {
-    		return false;
-    	}
-    	for (Entry e : catalog.getEntries()) {
-    		if (!(e instanceof UriEntry)) {
-    			return false;
-    		}
-    	}
-    	return true;
-    }
-
-	private static void backup(File folder, File catalogFile) {
-	    File backup;
-	    int i = 0;
-	    while ((backup = new File(folder, CATALOG_BACKUP_PREFIX + (i++) + ".xml")).exists()) {
-	        ;
-	    }
-	    catalogFile.renameTo(backup);
-	}
 
 
 }
