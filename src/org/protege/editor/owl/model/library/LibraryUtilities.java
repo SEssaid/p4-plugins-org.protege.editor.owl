@@ -18,7 +18,7 @@ public class LibraryUtilities {
 		if (m1.find()) {
 			return m1.group(1);
 		}
-		Pattern atEnd = Pattern.compile(", " + property + "=(*)$", flags);
+		Pattern atEnd = Pattern.compile(", " + property + "=(.*)$", flags);
 		Matcher m2 = atEnd.matcher(s);
 		if (m2.find()) {
 			return m2.group(1);
