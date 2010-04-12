@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.library.OntologyCatalogManager;
 import org.protege.editor.owl.model.library.OntologyGroupManager;
 import org.protege.editor.owl.model.library.LibraryUtilities;
+import org.protege.xmlcatalog.CatalogUtilities;
 import org.protege.xmlcatalog.Prefer;
 import org.protege.xmlcatalog.XMLCatalog;
 import org.protege.xmlcatalog.XmlBaseContext;
@@ -74,25 +75,31 @@ public class FolderGroupManager implements OntologyGroupManager {
 
 	public XMLCatalog ensureFolderCatalogExists(File folder) throws IOException {
 		XMLCatalog catalog = OntologyCatalogManager.ensureCatalogExists(folder);
-		boolean groupEntryFound = false;
+		File catalogFile = OntologyCatalogManager.getCatalogFile(folder);
+		GroupEntry ge = null;
 		for (Entry e : catalog.getEntries()) {
 			if (e instanceof GroupEntry) {
-				GroupEntry ge = (GroupEntry) e;
-				if (folder.getCanonicalPath().equals(LibraryUtilities.getStringProperty(ge, DIR_PROP))) {
-					groupEntryFound = true;
+				if (folder.getCanonicalPath().equals(LibraryUtilities.getStringProperty((GroupEntry) e, DIR_PROP))) {
+					ge = (GroupEntry) e;
 					break;
 				}
 			}
 		}
-		if (!groupEntryFound) {
-			catalog.addEntry(createGroupEntry(folder, catalog));
+		if (ge == null) {
+			ge = createGroupEntry(folder, catalog);
+			catalog.addEntry(ge);
+			update(ge, -1);
+			CatalogUtilities.save(catalog, catalogFile);
+		}
+		else if (update(ge, catalogFile.lastModified())) {
+			CatalogUtilities.save(catalog, catalogFile);
 		}
 		return catalog;
 	}
 	
 	public GroupEntry createGroupEntry(File folder, XmlBaseContext context) throws IOException {
 		String id = ID_PREFIX + ", " + DIR_PROP + "=" + folder.getCanonicalPath();
-		return new GroupEntry(id, context, Prefer.PUBLIC, null);
+		return new GroupEntry(id, context, Prefer.PUBLIC, folder.toURI());
 	}
 
     
