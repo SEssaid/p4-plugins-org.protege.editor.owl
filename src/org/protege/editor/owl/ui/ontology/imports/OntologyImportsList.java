@@ -157,7 +157,7 @@ public class OntologyImportsList extends MList {
                 File f = new File(importersDocumentLocation.toURI());
                 XMLCatalog catalog = eKit.getModelManager().addRootFolder(f.getParentFile());
                 catalog.addEntry(new UriEntry("Imports Wizard Entry", catalog, importersDocumentLocation.toURI().toString(), physicalLocation.toURI(), null));
-                CatalogUtilities.save(catalog, new File(f.getParentFile(), OntologyCatalogManager.CATALOG_NAME));
+                CatalogUtilities.save(catalog, OntologyCatalogManager.getCatalogFile(f.getParentFile()));
             }
         }
         catch (Throwable t) {
