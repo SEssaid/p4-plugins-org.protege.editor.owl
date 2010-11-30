@@ -131,6 +131,7 @@
                     org.protege.editor.owl.*
                   </Export-Package>
                   <Import-Package>
+                      org.eclipse.core.runtime;registry=split,
                       *
                   </Import-Package>
                   <Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
@@ -140,7 +141,7 @@
                       protege-owlapi-extensions, xmlcatalog
                   </Embed-Dependency>
                   <Include-Resource>
-                      resources, {maven-resources}
+                      plugin.xml, resources, {maven-resources}
                   </Include-Resource>
                 </instructions>
                 <executions>
@@ -171,6 +172,9 @@
 					<!-- We set skip to true. So the unit tests can be explicitly defined 
 						in xml file reference below -->
 					<skip>true</skip>
+                    <systemPropertyVariables>
+                        <log4j.configuration>file:log4j.xml</log4j.configuration>
+                    </systemPropertyVariables>
 				</configuration>
 				<executions>
 					<execution>
@@ -184,10 +188,13 @@
 							<suiteXmlFiles>
 								<suiteXmlFile>src/test/resources/unit-tests.xml</suiteXmlFile>
 							</suiteXmlFiles>
-                            <systemPropertyVariables>
-                                <log4j.configuration>file:log4j.xml</log4j.configuration>
-                            </systemPropertyVariables>
-						</configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>log4j.configuration</name>
+                                    <value>file:log4j.xml</value>
+                                </property>
+                            </systemProperties>
+				        </configuration>
 					</execution>
 				</executions>
 			</plugin>
