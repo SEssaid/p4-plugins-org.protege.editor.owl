@@ -131,17 +131,16 @@
                     org.protege.editor.owl.*
                   </Export-Package>
                   <Import-Package>
-                      !junit.framework,!com.sun.*,
                       *
                   </Import-Package>
                   <Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
                   <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
                   <Include-Resource>plugin.xml,{maven-resources}</Include-Resource>
                   <Embed-Dependency>
-                      protege-owl-extensions, xmlcatalog
+                      protege-owlapi-extensions, xmlcatalog
                   </Embed-Dependency>
                   <Include-Resource>
-                      resources
+                      resources, {maven-resources}
                   </Include-Resource>
                 </instructions>
                 <executions>
@@ -185,6 +184,9 @@
 							<suiteXmlFiles>
 								<suiteXmlFile>src/test/resources/unit-tests.xml</suiteXmlFile>
 							</suiteXmlFiles>
+                            <systemPropertyVariables>
+                                <log4j.configuration>file:log4j.xml</log4j.configuration>
+                            </systemPropertyVariables>
 						</configuration>
 					</execution>
 				</executions>
